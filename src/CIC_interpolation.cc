@@ -72,8 +72,8 @@ void CIC_interpolation_regular_grid(vector<Particle_data> &particles,
     MESSAGE::Message message( userOptions.verboseLevel );
     message << "\nInterpolating the fields to the grid using the CIC method. The interpolation takes place inside the box of coordinates " << userOptions.region.print()
             << " on a " << MESSAGE::printElements( nGrid, NO_DIM, "*" ) << " grid ... " << MESSAGE::Flush;
-    boost::timer t;
-    t.restart();
+    boost::timer::cpu_timer t;
+    t.start();
     
     
     // allocate memory for the results

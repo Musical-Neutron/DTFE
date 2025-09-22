@@ -50,7 +50,7 @@ This header contains functions that will select the particles inside a sub-box o
 #include "miscellaneous.h"
 #include "message.h"
 
-#include <boost/timer.hpp>
+#include <boost/timer/timer.hpp>
 
 typedef std::vector<Particle_data>::iterator   vectorIterator;
 
@@ -64,13 +64,14 @@ void insertParticlesInBox(std::vector<Particle_data> &p,
 
 
 /* Prints the elapsed time and updates the 'totalTime' variable in User_options class. */
-void printElapsedTime(boost::timer *t, User_options *userOptions,
+void printElapsedTime(boost::timer::cpu_timer *t, User_options *userOptions,
                       std::string computationQuantityName)
 {
-    userOptions->totalTime += t->elapsed();
+    double elapsed_seconds = static_cast<double>(t->elapsed().wall) * 1e-9;
+    userOptions->totalTime += elapsed_seconds;
     MESSAGE::Message message( userOptions->verboseLevel );
-    message << "  >>> Time: " << t->elapsed()/userOptions->noProcessors << " sec. (" << computationQuantityName << ")\n" << MESSAGE::Flush;
-    t->restart();
+    message << "  >>> Time: " << elapsed_seconds / userOptions->noProcessors << " sec. (" << computationQuantityName << ")\n" << MESSAGE::Flush;
+    t->start();
 }
 
 

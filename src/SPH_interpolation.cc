@@ -267,8 +267,8 @@ void SPH_interpolation(vector<Particle_data> &p,
     
     // first construct the kdtree
     message << "Computing the kdtree for the SPH interpolation ... " << MESSAGE::Flush;
-    boost::timer t;
-    t.restart();
+    boost::timer::cpu_timer t;
+    t.start();
     size_t const noParticles = p.size();
     kdtree2_array dataPoints(extents[noParticles][NO_DIM]);
     for (size_t i=0; i<noParticles; ++i)
@@ -295,7 +295,7 @@ void SPH_interpolation(vector<Particle_data> &p,
     
     // find the smoothing length and SPH density associated to each particle
     message << "Computing the smoothing scale and density at each particle position.\n\tDone:  " << MESSAGE::Flush;
-    t.restart();
+    t.start();
     kdtree2_result_vector result;   //stores the result of the nearest neighbors
     int N = int( userOptions.SPH_neighbors );
     std::vector<Real> smoothingLength( noParticles, Real(0.) ); // stores the smoothing length for each particle
@@ -332,7 +332,7 @@ void SPH_interpolation(vector<Particle_data> &p,
     
     // computes the quantities of interest at grid points
     message << "Computing the interpolated fields on the grid.\n\tDone:  " << MESSAGE::Flush;
-    t.restart();
+    t.start();
     // reserve memory for the output
     q->density.reserve( totalGrid );    //always need memory for the density
     if ( userOptions.aField.velocity ) q->velocity.reserve( totalGrid );
@@ -517,8 +517,8 @@ void SPH_interpolation(vector<Particle_data> &p,
 //     
 //     
 //     message << "\nComputing the smoothing scale and density at each particle position.\n\tDone:  " << MESSAGE::Flush;
-//     boost::timer t;
-//     t.restart();
+//     boost::timer::cpu_timer t;
+//     t.start();
 //     // find the smoothing length and SPH density associated to each particle
 //     kdtree2_result_vector result;   //stores the result of the nearest neighbors
 //     int N = int( userOptions.SPH_neighbors );
@@ -565,7 +565,7 @@ void SPH_interpolation(vector<Particle_data> &p,
 //     
 //     
 //     message << "Computing the interpolated fields on the grid.\n\tDone:  " << MESSAGE::Flush;
-//     t.restart();
+//     t.start();
 //     // computes the quantities of interest at grid points
 //     size_t const *grid = &(userOptions.gridSize[0]);
 //     Box box = userOptions.region;    // the box coordinates in which the density is computed
