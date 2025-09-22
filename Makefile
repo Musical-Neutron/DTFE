@@ -2,14 +2,13 @@
 
 
 # Path to the GSL, Boost C++ and CGAL libraries - must be set by user (only if they aren't installed in the default system path) -- (NOTE: You must add only the directory where the libraries are installed, the program will add the '/lib' and '/include' parts automatically); C++ compiler - preferably a version that supports OpenMP
-#GSL_PATH   = /cosma/local/gsl/2.4
-BOOST_PATH = /home/onewton/boost_install
-CGAL_PATH  = /home/onewton/software/cgal
-#MPRF_PATH  = /cosma/home/dphlss/cautun/Programs/stow
+GSL_PATH   = /cosma/local/gsl/2.4
+BOOST_PATH = /cosma/local/boost/gnu_7.3.0/1_67_0
+CGAL_PATH  = /cosma/home/dphlss/cautun/Programs/stow
+MPRF_PATH  = /cosma/home/dphlss/cautun/Programs/stow
 CC = g++
 # set the following if you have installed the HDF5 library and would like to read in HDF5 gadget files (you need to compile the HDF5 library with the '--enable-cxx' configure option)
-#HDF5_PATH  = /cosma/local/hdf5/gnu_7.3.0/1.10.3
-HDF5_PATH  = /usr
+HDF5_PATH  = /cosma/local/hdf5/gnu_7.3.0/1.10.3
 
 
 # paths to where to put the object files and the executables files. If you build the DTFE library than you also need to specify the directory where to put the library and the directory where to copy the header files needed by the library (choose an empty directory for the header files).
@@ -41,7 +40,7 @@ OPTIONS += -DNO_SCALARS=1
 ############################# Input and output operations default settings ##################################
 #------------------------ set which are the default input and output functions for doing data io
 # default function to read the input data (101-multiple gadget file, 102-single gadget file, 105-HDF5 gadget file, 111-text file, ... see documentation for more options). The input file type can be set during runtime using the option '--input'. This makefile option only sets a default input file in the case none is given via the program options.
-OPTIONS += -DINPUT_FILE_DEFAULT=105 
+OPTIONS += -DINPUT_FILE_DEFAULT=101 
 # default value for the units of the input data (value=what is 1 Mpc in the units of the data - in this example the data is in kpc). You can change this also during runtime using the program option '--MpcUnit'.
 OPTIONS += -DMPC_UNIT=1000. 
 # default function to write the output data (101-binary file, 111-text file, ... see documentation for more options). The output file type can be set during runtime using the option '--output'. This makefile option only sets a default output file in the case none is given via the program options.
@@ -107,8 +106,7 @@ endif
 COMPILE_FLAGS = -frounding-math -O3 -fopenmp -DNDEBUG $(OPTIONS)
 DTFE_INC = $(INCLUDES)
 # the following libraries should work in most cases
-#DTFE_LIB = $(LIBRARIES) -lCGAL -lboost_thread -lboost_filesystem -lboost_program_options -lgsl -lgslcblas -lm  -lgmp -lmpfr -lboost_system
-DTFE_LIB = $(LIBRARIES) -lboost_timer -lboost_thread -lboost_filesystem -lboost_program_options -lgsl -lgslcblas -lm  -lgmp -lmpfr -lboost_system
+DTFE_LIB = $(LIBRARIES) -lCGAL -lboost_thread -lboost_filesystem -lboost_program_options -lgsl -lgslcblas -lm  -lgmp -lmpfr -lboost_system
 
 
 
