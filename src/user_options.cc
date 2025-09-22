@@ -206,7 +206,7 @@ void User_options::addOptions(po::options_description &allOptions,
     
     po::options_description hidden("Hidden options");
     hidden.add_options()
-            ("inputFile", po::value<std::string>(&(this->inputFilename)), "name of the input position file")
+            ("inputFile", po::value<std::string>(&(this->inputFilename)), "name of the input position file. If there are multiple files to read use %i or %s in the filename.")
             ("outputFile",po::value<std::string>(&(this->outputFilename)), "root name of the output file/files")
             ;
     
@@ -588,7 +588,7 @@ void User_options::readOptions(int argc, char *argv[], bool getFileNames, bool s
     if ( vm.count("help") )
         this->shortHelp( argv[0] ); // print available options and exit
     else if ( vm.count("full_help") )
-        this->helpInformation( visibleOptions, argv[0] ); // print available options and exit
+        this->helpInformation( allOptions, argv[0] ); // print available options and exit
     
     
     conflicting_options(vm, "SPH", "TSC");

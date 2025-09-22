@@ -50,7 +50,7 @@ void HDF5_readGadgetHeader(std::string filename,
     const H5std_string FILE_NAME( filename );
     
     // open the HDF5 file and the header group
-    H5File *file = new H5File( FILE_NAME, H5F_ACC_RDONLY, H5P_DEFAULT );
+    H5File *file = new H5File( FILE_NAME, H5F_ACC_RDONLY );
     Group *group = new Group( file->openGroup("/Header") );
     
     
@@ -131,7 +131,7 @@ void HDF5_readGadgetData(std::string filename,
     
     // open the HDF5 file
     const H5std_string FILE_NAME( filename );
-    H5File *file = new H5File( FILE_NAME, H5F_ACC_RDONLY, H5P_DEFAULT );
+    H5File *file = new H5File( FILE_NAME, H5F_ACC_RDONLY );
     Group *group;
     
     
@@ -197,7 +197,7 @@ void HDF5_readGadgetData(std::string filename,
     {
         float *velocities = readData->velocity();              // returns a pointer to the particle velocity array
         size_t dataOffset = (*numberParticlesRead) * NO_DIM;   // the offset in the velocity array from where to start reading the new data
-        message << "\t reading the particles velocities ... " << MESSAGE::Flush;
+        message << "\t reading the particles velocities from 'Velocity' ... " << MESSAGE::Flush;
         for(int type=0; type<6; type++)                        // loop over the particle species
         {
             if ( gadgetHeader.npart[type]<=0 ) continue;
@@ -206,7 +206,19 @@ void HDF5_readGadgetData(std::string filename,
             group = new Group( file->openGroup(buf) );
             
             // open the data set
-            DataSet dataset = group->openDataSet("Velocity");
+            DataSet dataset;
+            try {
+                dataset = group->openDataSet("Velocity");
+            } catch (H5::GroupIException &e) {
+                try {
+                    dataset = group->openDataSet("Velocities");
+                    message << "\t 'Velocity' not found in group " + std::string(buf) + ". Trying 'Velocities' instead ...\n" << MESSAGE::Flush;
+                    message << "\t reading the particles velocities from 'Velocities' ... " << MESSAGE::Flush;
+                } catch (H5::GroupIException &e2) {
+                    delete group;
+                    throwError("Neither 'Velocity' nor 'Velocities' found in group " + std::string(buf));
+                }
+            }
             
             dataset.read( &(velocities[dataOffset]), PredType::NATIVE_FLOAT );
             delete group;
@@ -445,10 +457,10 @@ void HDF5_readGadgetData_HI(std::string filename,
     
     
     // open the HDF5 file - this gives the gas data
-    H5File *file = new H5File( filename.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT );
+    H5File *file = new H5File( filename.c_str(), H5F_ACC_RDONLY );
     Group *group;
     // open the file with the HI fraction
-    H5File *file2 = new H5File( h1FileName.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT );
+    H5File *file2 = new H5File( h1FileName.c_str(), H5F_ACC_RDONLY );
     
     
     // read the coordinates
@@ -553,7 +565,7 @@ void HDF5_readGadgetData_HI(std::string filename,
     {
         float *velocities = readData->velocity();              // returns a pointer to the particle velocity array
         size_t dataOffset = (*numberParticlesRead) * NO_DIM;   // the offset in the velocity array from where to start reading the new data
-        message << "\t reading the particles velocities ... " << MESSAGE::Flush;
+        message << "\t reading the particles velocities from 'Velocity' ... " << MESSAGE::Flush;
         for(int type=0; type<6; type++)                        // loop over the particle species
         {
             if ( gadgetHeader.npart[type]<=0 ) continue;
@@ -562,7 +574,20 @@ void HDF5_readGadgetData_HI(std::string filename,
             group = new Group( file->openGroup(buf) );
             
             // open the data set
-            DataSet dataset = group->openDataSet("Velocity");
+            DataSet dataset;
+            try {
+                dataset = group->openDataSet("Velocity");
+            } catch (H5::GroupIException &e) {
+                try {
+                    dataset = group->openDataSet("Velocities");
+                    message << "\t 'Velocity' not found in group " + std::string(buf) + ". Trying 'Velocities' instead ...\n" << MESSAGE::Flush;
+                    message << "\t reading the particles velocities from 'Velocities' ... " << MESSAGE::Flush;
+                } catch (H5::GroupIException &e2) {
+                    delete group;
+                    throwError("Neither 'Velocity' nor 'Velocities' found in group " + std::string(buf));
+                }
+            }
+
             
             dataset.read( &(velocities[dataOffset]), PredType::NATIVE_FLOAT );
             delete group;
